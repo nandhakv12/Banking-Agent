@@ -10,6 +10,44 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Try to import streamlit for secrets
+try:
+    import streamlit as st
+    _has_streamlit = True
+except ImportError:
+    _has_streamlit = False
+
+# ============================================================
+# ANTHROPIC (Claude AI)
+# ============================================================
+if _has_streamlit and 'ANTHROPIC_API_KEY' in st.secrets:
+    ANTHROPIC_API_KEY = st.secrets['ANTHROPIC_API_KEY']
+else:
+    ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+
+CLAUDE_MODEL = "claude-sonnet-4-5-20250929"
+MAX_TOKENS = 4096
+
+# ============================================================
+# FIREBASE
+# ============================================================
+if _has_streamlit and 'FIREBASE_PROJECT_ID' in st.secrets:
+    FIREBASE_PROJECT_ID = st.secrets['FIREBASE_PROJECT_ID']
+    FIREBASE_SERVICE_ACCOUNT = None  # Will use secrets directly
+    FIREBASE_API_KEY = st.secrets.get('FIREBASE_API_KEY')
+else:
+    FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID")
+    FIREBASE_SERVICE_ACCOUNT = os.getenv("FIREBASE_SERVICE_ACCOUNT")
+    FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
+
+# ... rest of config stays the same
+
 # ============================================================
 # ANTHROPIC (Claude AI)
 # ============================================================

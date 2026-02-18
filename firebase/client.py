@@ -29,22 +29,50 @@ def initialize_firebase():
         return _firestore_client
 
     try:
-        # Load credentials from service account key
-        cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT)
+        # Try Streamlit secrets FIRST
+        try:
+            import streamlit as st
+            
+            # Check if we have Firebase secrets
+            if 'FIREBASE_SERVICE_ACCOUNT' in st.secrets:
+                print("📂 Loading Firebase from Streamlit secrets")
+                
+                # Convert Streamlit secrets to dict
+                firebase_creds = dict(st.secrets['FIREBASE_SERVICE_ACCOUNT'])
+                cred = credentials.Certificate(firebase_creds)
+                
+                print("✅ Firebase credentials loaded from Streamlit secrets")
+            else:
+                raise KeyError("FIREBASE_SERVICE_ACCOUNT not in secrets")
+                
+        except (ImportError, KeyError) as e:
+            # Streamlit not available or no secrets - use local file
+            print(f"📂 Streamlit secrets not available ({e}), using local file")
+            
+            if not FIREBASE_SERVICE_ACCOUNT or FIREBASE_SERVICE_ACCOUNT == "None" or FIREBASE_SERVICE_ACCOUNT is None:
+                raise ValueError(
+                    "FIREBASE_SERVICE_ACCOUNT not configured in .env file. "
+                    "Please set the path to your serviceAccountKey.json file."
+                )
+            
+            cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT)
+            print(f"✅ Firebase credentials loaded from: {FIREBASE_SERVICE_ACCOUNT}")
 
         # Initialize Firebase app
         _firebase_app = firebase_admin.initialize_app(cred, {
-            'projectId': FIREBASE_PROJECT_ID
+            'projectId': FIREBASE_PROJECT_ID or st.secrets.get('FIREBASE_PROJECT_ID', 'resraech')
         })
 
         # Initialize Firestore client
         _firestore_client = firestore.client()
 
-        print(f"✅ Firebase connected: {FIREBASE_PROJECT_ID}")
+        print(f"✅ Firebase connected successfully!")
         return _firestore_client
 
     except Exception as e:
         print(f"❌ Firebase connection failed: {e}")
+        import traceback
+        traceback.print_exc()
         raise
 
 def get_firestore():
