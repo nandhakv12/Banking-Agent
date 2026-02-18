@@ -22,25 +22,24 @@ _firestore_client = None
 
 
 def initialize_firebase():
+    """Initialize Firebase connection (called once at startup)"""
     global _firebase_app, _firestore_client
 
     if _firebase_app is not None:
         return _firestore_client
 
     try:
-        # Check if running on Streamlit Cloud
-        if 'FIREBASE_SERVICE_ACCOUNT' in st.secrets:
-            # Load from Streamlit secrets
-            cred = credentials.Certificate(dict(st.secrets['FIREBASE_SERVICE_ACCOUNT']))
-        else:
-            # Load from file (local development)
-            cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT)
+        # Load credentials from service account key
+        cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT)
 
+        # Initialize Firebase app
         _firebase_app = firebase_admin.initialize_app(cred, {
             'projectId': FIREBASE_PROJECT_ID
         })
 
+        # Initialize Firestore client
         _firestore_client = firestore.client()
+
         print(f"✅ Firebase connected: {FIREBASE_PROJECT_ID}")
         return _firestore_client
 
