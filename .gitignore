@@ -1,0 +1,58 @@
+# Environment variables (CRITICAL - DO NOT COMMIT)
+.env
+*.env
+.env.local
+
+# Firebase credentials (CRITICAL - DO NOT COMMIT)
+firebase/serviceAccountKey.json
+*serviceAccountKey.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+bankenv/
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Test files
+test_*.py
+fix_*.py
+config_*.txt
+serviceAccountKey_*.json
+
+# Output files
+*.pyc
+*.pyo
+
+# Firebase credentials (CRITICAL)
+firebase/serviceAccountKey.json
+*serviceAccountKey.json
+*.json
+resraech-*.json
+
+# Environment files
+.env
+*.env
